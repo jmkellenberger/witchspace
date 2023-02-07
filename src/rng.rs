@@ -8,7 +8,6 @@ pub fn rng_from_seed<T: Hash>(seed: T) -> Pcg64 {
     Seeder::from(seed).make_rng()
 }
 
-#[allow(dead_code)]
 pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
     t.hash(&mut s);
@@ -16,20 +15,90 @@ pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
 }
 
 pub trait Rollable {
-    fn roll(&mut self, n: u32) -> u32;
+    fn roll_dice(&mut self, num: usize, sides: u32) -> Vec<u32>;
+    fn roll(&mut self, num: usize, sides: u32) -> u32;
     fn flux(&mut self) -> i32;
 }
 
 impl Rollable for Pcg64 {
-    fn roll(&mut self, n: u32) -> u32 {
-        if n < 1 {
+    fn roll_dice(&mut self, num: usize, sides: u32) -> Vec<u32> {
+        if sides < 1 || num < 1 {
+            return vec![0];
+        } else {
+            return (0..num).map(|_| self.gen_range(1..=sides)).collect();
+        }
+    }
+
+    fn roll(&mut self, num: usize, sides: u32) -> u32 {
+        if sides < 1 || num < 1 {
             return 0;
         } else {
-            (0..n).fold(0, |acc, _| self.gen_range(1..7) + acc)
+            self.roll_dice(num, sides).iter().sum()
         }
     }
 
     fn flux(&mut self) -> i32 {
-        self.roll(1) as i32 - self.roll(1) as i32
+        self.roll_dice(2, 6)
+            .iter()
+            .map(|x| *x as i32)
+            .reduce(|acc, die| acc - die)
+            .unwrap_or(0)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn setup() -> Pcg64 {
+        rng_from_seed("test")
+    }
+
+    #[test]
+    fn test_roll_range() {
+        let mut rng = setup();
+        let rolls = rng.roll_dice(100, 6);
+        let min = rolls.iter().min().unwrap();
+        let max = rolls.iter().max().unwrap();
+        println!("{:?}", rolls);
+
+        assert_eq!((*min, *max), (1, 6))
+    }
+
+    #[test]
+    fn test_batch_rolls() {
+        let mut rng = setup();
+        let rolls = rng.roll_dice(100, 6);
+        let mut rng2 = setup();
+        let rolls2 = rng2.roll_dice(100, 6);
+        assert_eq!(rolls, rolls2)
+    }
+
+    #[test]
+    fn test_roll() {
+        let mut rng = setup();
+        let rolls = rng.roll(100, 6);
+        let mut rng2 = setup();
+        let rolls2 = rng2.roll(100, 6);
+        assert_eq!(rolls, rolls2)
+    }
+
+    #[test]
+    fn test_flux() {
+        let mut rng = setup();
+        let rolls = rng.flux();
+        let mut rng2 = setup();
+        let rolls2 = rng2.flux();
+        assert_eq!(rolls, rolls2)
+    }
+
+    #[test]
+    fn test_flux_range() {
+        let mut rng = setup();
+        let rolls: Vec<i32> = (0..100).map(|_| rng.flux()).collect();
+        let min = rolls.iter().min().unwrap();
+        let max = rolls.iter().max().unwrap();
+        println!("{:?}", rolls);
+        assert_eq!((*min, *max), (-5, 5))
     }
 }
