@@ -32,5 +32,6 @@ fn main() {
             .collect()
     };
 
-    println!("rolling {} dice, got: {}", args.dice, results)
+    println!("rolling {} dice, got: {}", args.dice, results);
+    println!("Have a random UWP: {:?}", Uwp::random(&mut rng));
 }
