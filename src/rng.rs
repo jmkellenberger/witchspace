@@ -60,7 +60,6 @@ mod tests {
         let rolls = rng.roll_dice(100, 6);
         let min = rolls.iter().min().unwrap();
         let max = rolls.iter().max().unwrap();
-        println!("{:?}", rolls);
 
         assert_eq!((*min, *max), (1, 6))
     }
@@ -98,7 +97,6 @@ mod tests {
         let rolls: Vec<i32> = (0..100).map(|_| rng.flux()).collect();
         let min = rolls.iter().min().unwrap();
         let max = rolls.iter().max().unwrap();
-        println!("{:?}", rolls);
         assert_eq!((*min, *max), (-5, 5))
     }
 }
