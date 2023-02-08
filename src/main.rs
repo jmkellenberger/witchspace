@@ -13,9 +13,9 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    let mut rng: Pcg64 = match args.seed {
-        Some(seed) => rng_from_seed(seed),
-        None => rng(),
+    let mut rng: Dice = match args.seed {
+        Some(seed) => Dice::seed(seed),
+        None => <Dice as rand::SeedableRng>::from_entropy(),
     };
     for world in 0..args.worlds {
         println!("World {}: {}", world + 1, System::generate(&mut rng));

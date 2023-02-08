@@ -1,31 +1,20 @@
 use rand::Rng;
-use rand::SeedableRng;
-pub use rand_pcg::Pcg64;
-use rand_seeder::Seeder;
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
+use rand_seeder::{Seeder, SipRng};
 
-pub fn rng_from_seed<T: Hash>(seed: T) -> Pcg64 {
-    Seeder::from(seed).make_rng()
-}
-
-pub fn rng() -> Pcg64 {
-    Pcg64::from_entropy()
-}
-
-pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
-    let mut s = DefaultHasher::new();
-    t.hash(&mut s);
-    s.finish()
-}
+pub type Dice = SipRng;
 
 pub trait Rollable {
+    fn seed<T: std::hash::Hash>(seed: T) -> Dice;
     fn roll_dice(&mut self, num: usize, sides: i32) -> Vec<i32>;
     fn roll(&mut self, num: usize, sides: i32, modifier: i32) -> i32;
     fn flux(&mut self, modifier: i32) -> i32;
 }
 
-impl Rollable for Pcg64 {
+impl Rollable for Dice {
+    fn seed<T: std::hash::Hash>(seed: T) -> Dice {
+        Seeder::from(seed).make_rng()
+    }
+
     fn roll_dice(&mut self, num: usize, sides: i32) -> Vec<i32> {
         if sides < 1 || num < 1 {
             return vec![0];
@@ -55,8 +44,8 @@ impl Rollable for Pcg64 {
 mod tests {
     use super::*;
 
-    fn setup() -> Pcg64 {
-        rng_from_seed("test")
+    fn setup() -> Dice {
+        Dice::seed("test")
     }
 
     #[test]
