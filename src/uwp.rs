@@ -1,4 +1,29 @@
+use std::fmt::Display;
+
 use crate::prelude::*;
+
+fn to_ehex(value: i32) -> String {
+    match value {
+        0..=9 => value.to_string(),
+        10..=33 => ehex(value),
+        _ => String::from("?"),
+    }
+}
+
+fn ehex(value: i32) -> String {
+    let chars = (b'A'..=b'Z')
+        .filter_map(|c| {
+            let c = c as char;
+            if c.is_alphabetic() && c != 'O' && c != 'I' {
+                Some(c)
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<char>>();
+
+    String::from(chars[(value - 10) as usize])
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Uwp {
@@ -10,6 +35,23 @@ pub struct Uwp {
     government: i32,
     law: i32,
     tech: i32,
+}
+
+impl Display for Uwp {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}{}{}{}{}{}{}-{}",
+            self.port,
+            to_ehex(self.size),
+            to_ehex(self.atmosphere),
+            to_ehex(self.hydrographics),
+            to_ehex(self.population),
+            to_ehex(self.government),
+            to_ehex(self.law),
+            to_ehex(self.tech)
+        )
+    }
 }
 
 impl Uwp {

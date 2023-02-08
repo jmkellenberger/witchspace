@@ -32,5 +32,5 @@ fn main() {
     };
 
     println!("rolling {} dice, got: {}", args.dice, results);
-    println!("Have a random UWP: {:?}", Uwp::generate_mainworld(&mut rng));
+    println!("Have a random UWP: {}", Uwp::generate_mainworld(&mut rng));
 }
