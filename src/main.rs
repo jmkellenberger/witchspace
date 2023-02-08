@@ -1,5 +1,4 @@
 use clap::Parser;
-use rand::SeedableRng;
 use witchspace::prelude::*;
 
 /// Roll a number of dice
@@ -8,7 +7,7 @@ struct Cli {
     /// The number of six-sided dice to roll
     dice: usize,
     /// Number of sides on the dice
-    sides: u32,
+    sides: i32,
     /// A seed for the PRNG
     #[arg(long)]
     seed: Option<String>,
@@ -21,10 +20,10 @@ fn main() {
     let args = Cli::parse();
     let mut rng: Pcg64 = match args.seed {
         Some(seed) => rng_from_seed(seed),
-        None => Pcg64::from_entropy(),
+        None => rng(),
     };
     let results: String = if args.sum {
-        rng.roll(args.dice, args.sides).to_string()
+        rng.roll(args.dice, args.sides, 0).to_string()
     } else {
         rng.roll_dice(args.dice, args.sides)
             .iter()
@@ -33,5 +32,5 @@ fn main() {
     };
 
     println!("rolling {} dice, got: {}", args.dice, results);
-    println!("Have a random UWP: {:?}", Uwp::random(&mut rng));
+    println!("Have a random UWP: {:?}", Uwp::generate_mainworld(&mut rng));
 }
