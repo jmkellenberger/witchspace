@@ -6,7 +6,7 @@ fn to_ehex(value: i32) -> String {
     match value {
         0..=9 => value.to_string(),
         10..=33 => ehex(value),
-        _ => String::from("?"),
+        _ => format!("({value})?"),
     }
 }
 
@@ -27,14 +27,14 @@ fn ehex(value: i32) -> String {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Uwp {
-    pub port: String,
-    pub size: i32,
-    pub atmosphere: i32,
-    pub hydrographics: i32,
-    pub population: i32,
-    pub government: i32,
-    pub law: i32,
-    pub tech: i32,
+    port: String,
+    size: i32,
+    atmosphere: i32,
+    hydrographics: i32,
+    population: i32,
+    government: i32,
+    law: i32,
+    tech: i32,
 }
 
 impl Display for Uwp {
@@ -114,6 +114,37 @@ impl Uwp {
             government,
             law,
             tech,
+        }
+    }
+
+    pub fn check_bases<R: Rollable>(mainworld: &Self, rng: &mut R) -> String {
+        let naval_base = match mainworld.port.as_str() {
+            "A" => rng.roll(2, 6, 0) <= 6,
+            "B" => rng.roll(2, 6, 0) <= 5,
+            _ => false,
+        };
+        let scout_base = match mainworld.port.as_str() {
+            "A" => rng.roll(2, 6, 0) <= 4,
+            "B" => rng.roll(2, 6, 0) <= 5,
+            "C" => rng.roll(2, 6, 0) <= 6,
+            "D" => rng.roll(2, 6, 0) <= 7,
+            _ => false,
+        };
+
+        let bases = match (naval_base, scout_base) {
+            (true, true) => "B",
+            (true, false) => "N",
+            (false, true) => "S",
+            (false, false) => " ",
+        };
+
+        String::from(bases)
+    }
+
+    pub fn get_population_mod<R: Rollable>(mainworld: &Self, rng: &mut R) -> i32 {
+        match mainworld.population {
+            0 => 0,
+            _ => rng.roll(1, 9, 0),
         }
     }
 }
