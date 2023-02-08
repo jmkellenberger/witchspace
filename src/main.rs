@@ -18,6 +18,6 @@ fn main() {
         None => <Dice as rand::SeedableRng>::from_entropy(),
     };
     for world in 0..args.worlds {
-        println!("World {}: {}", world + 1, System::generate(&mut rng));
+        println!("World {}: {}", world + 1, generate_system(&mut rng));
     }
 }
