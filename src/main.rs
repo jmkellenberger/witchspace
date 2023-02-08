@@ -18,6 +18,6 @@ fn main() {
         None => rng(),
     };
     for world in 0..args.worlds {
-        println!("World {}: {}", world + 1, Uwp::generate_mainworld(&mut rng));
+        println!("World {}: {}", world + 1, System::generate(&mut rng));
     }
 }

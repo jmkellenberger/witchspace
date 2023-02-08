@@ -27,14 +27,14 @@ fn ehex(value: i32) -> String {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Uwp {
-    port: String,
-    size: i32,
-    atmosphere: i32,
-    hydrographics: i32,
-    population: i32,
-    government: i32,
-    law: i32,
-    tech: i32,
+    pub port: String,
+    pub size: i32,
+    pub atmosphere: i32,
+    pub hydrographics: i32,
+    pub population: i32,
+    pub government: i32,
+    pub law: i32,
+    pub tech: i32,
 }
 
 impl Display for Uwp {
