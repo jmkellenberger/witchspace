@@ -13,11 +13,12 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    let mut rng: Dice = match args.seed {
-        Some(seed) => Dice::seed(seed),
-        None => <Dice as rand::SeedableRng>::from_entropy(),
+    let seed: Seed = match args.seed {
+        Some(seed) => Seed::new(seed, Coordinate::new(0, 0)),
+        None => Seed::random(),
     };
     for world in 0..args.worlds {
-        println!("World {}: {}", world + 1, generate_system(&mut rng));
+        let subseed = seed.subseed(Coordinate::new(world as i32, world as i32));
+        println!("World {}: {}", world + 1, generate_system(subseed));
     }
 }

@@ -1,20 +1,59 @@
-use rand::Rng;
-use rand_seeder::{Seeder, SipRng};
+use crate::coordinate::Coordinate;
+use rand::{Rng, RngCore, SeedableRng};
+use rand_seeder::{Seeder, SipHasher, SipRng};
+use std::hash::{Hash, Hasher};
 
 pub type Dice = SipRng;
 
+#[derive(Debug, Clone, Hash)]
+pub struct Seed {
+    pub top_level_seed: String,
+    seed: u64,
+}
+
+impl Seed {
+    pub fn new(top_level_seed: String, coordinate: Coordinate) -> Self {
+        let mut hasher = SipHasher::new();
+        top_level_seed.hash(&mut hasher);
+        coordinate.hash(&mut hasher);
+        let seed = hasher.finish();
+
+        Self {
+            top_level_seed,
+            seed,
+        }
+    }
+
+    pub fn random() -> Self {
+        Self {
+            top_level_seed: String::from(""),
+            seed: Dice::from_entropy().next_u64(),
+        }
+    }
+
+    pub fn subseed(&self, coordinate: Coordinate) -> Self {
+        let mut hasher = SipHasher::new();
+        self.hash(&mut hasher);
+        coordinate.hash(&mut hasher);
+        let seed = hasher.finish();
+        Self {
+            top_level_seed: self.top_level_seed.clone(),
+            seed,
+        }
+    }
+
+    pub fn to_rng(&self) -> Dice {
+        Seeder::from(self.seed).make_rng()
+    }
+}
+
 pub trait Rollable {
-    fn seed<T: std::hash::Hash>(seed: T) -> Dice;
     fn roll_dice(&mut self, num: usize, sides: i32) -> Vec<i32>;
     fn roll(&mut self, num: usize, sides: i32, modifier: i32) -> i32;
     fn flux(&mut self, modifier: i32) -> i32;
 }
 
 impl Rollable for Dice {
-    fn seed<T: std::hash::Hash>(seed: T) -> Dice {
-        Seeder::from(seed).make_rng()
-    }
-
     fn roll_dice(&mut self, num: usize, sides: i32) -> Vec<i32> {
         if sides < 1 || num < 1 {
             return vec![0];
@@ -45,7 +84,7 @@ mod tests {
     use super::*;
 
     fn setup() -> Dice {
-        Dice::seed("test")
+        Seed::new(String::from("test"), Coordinate::new(0, 0)).to_rng()
     }
 
     #[test]
