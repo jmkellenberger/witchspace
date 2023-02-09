@@ -3,6 +3,7 @@ use rand_seeder::{Seeder, SipHasher, SipRng};
 use std::hash::{Hash, Hasher};
 
 pub type Dice = SipRng;
+pub type HashAlgo = SipHasher;
 
 #[derive(Debug, Clone, Hash)]
 pub struct Seed {
@@ -12,7 +13,7 @@ pub struct Seed {
 
 impl Seed {
     pub fn new<H: Hash>(top_level_seed: String, inputs: Vec<H>) -> Self {
-        let mut hasher = SipHasher::new();
+        let mut hasher = HashAlgo::new();
         top_level_seed.hash(&mut hasher);
         for input in inputs {
             input.hash(&mut hasher)
@@ -33,7 +34,7 @@ impl Seed {
     }
 
     pub fn subseed<H: Hash>(&self, inputs: Vec<H>) -> Self {
-        let mut hasher = SipHasher::new();
+        let mut hasher = HashAlgo::new();
         self.hash(&mut hasher);
         for input in inputs {
             input.hash(&mut hasher)
