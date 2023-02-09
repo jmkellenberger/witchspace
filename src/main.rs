@@ -4,8 +4,10 @@ use witchspace::prelude::*;
 /// Generate a traveller main world profile
 #[derive(Parser)]
 struct Cli {
-    /// The number of worlds to generate
-    worlds: usize,
+    /// The number of rows in the sector
+    rows: u32,
+    /// The number of columns in the sector
+    cols: u32,
     /// A seed for the PRNG
     #[arg(long)]
     seed: Option<String>,
@@ -17,8 +19,8 @@ fn main() {
         Some(seed) => Seed::new(seed, vec![1, 2, 3]),
         None => Seed::random(),
     };
-    for world in 0..args.worlds {
-        let subseed = seed.subseed(vec![world]);
-        println!("World {}: {}", world + 1, generate_system(subseed));
+    let sector = generate_sector(seed, args.rows, args.cols);
+    for system in sector {
+        println!("{}", system);
     }
 }
