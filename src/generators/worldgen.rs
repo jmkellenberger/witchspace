@@ -1,21 +1,26 @@
 use crate::prelude::*;
 
-pub fn generate_mainworld<R: Rollable>(rng: &mut R) -> World {
-    let port = String::from(
-        ["A", "A", "A", "B", "B", "C", "C", "D", "E", "E", "X"][rng.roll(2, 6, -2) as usize],
-    );
+const STARPORT_DISTRIBUTION: [&str; 11] = ["A", "A", "A", "B", "B", "C", "C", "D", "E", "E", "X"];
 
+pub fn generate_mainworld<R: Rollable>(rng: &mut R, hz_variance: i32, orbit: i32) -> World {
+    let orbit_roll = rng.flux(0);
+    let mainworld_type_roll = rng.flux(0);
+    let mainworld_type = mainworld_type(mainworld_type_roll, orbit_roll);
+
+    let port = roll_starport(rng.roll(2, 6, -2));
+
+    let naval_roll = rng.roll(2, 6, 0);
     let naval_base = match port.as_str() {
-        "A" => rng.roll(2, 6, 0) <= 6,
-        "B" => rng.roll(2, 6, 0) <= 5,
+        "A" => naval_roll <= 6,
+        "B" => naval_roll <= 5,
         _ => false,
     };
-
+    let scout_roll = rng.roll(2, 6, 0);
     let scout_base = match port.as_str() {
-        "A" => rng.roll(2, 6, 0) <= 4,
-        "B" => rng.roll(2, 6, 0) <= 5,
-        "C" => rng.roll(2, 6, 0) <= 6,
-        "D" => rng.roll(2, 6, 0) <= 7,
+        "A" => scout_roll <= 4,
+        "B" => scout_roll <= 5,
+        "C" => scout_roll <= 6,
+        "D" => scout_roll <= 7,
         _ => false,
     };
     let size = match rng.roll(2, 6, -2) {
@@ -68,8 +73,19 @@ pub fn generate_mainworld<R: Rollable>(rng: &mut R) -> World {
         )
         .clamp(0, 33);
 
+    let travel_zone = match (port.as_str(), government + law) {
+        ("X", _) | (_, 22..=32) => TravelZone::Red,
+        (_, 20 | 21) => TravelZone::Amber,
+        _ => TravelZone::Green,
+    };
+
     World {
+        mainworld_type,
+        hz_variance,
+        orbit,
         port,
+        naval_base,
+        scout_base,
         size,
         atmosphere,
         hydrographics,
@@ -78,8 +94,21 @@ pub fn generate_mainworld<R: Rollable>(rng: &mut R) -> World {
         government,
         law,
         tech,
-        naval_base,
-        scout_base,
+        travel_zone,
+    }
+}
+
+fn roll_starport(roll: i32) -> String {
+    String::from(STARPORT_DISTRIBUTION[roll as usize])
+}
+
+fn mainworld_type(flux: i32, orbit_roll: i32) -> MainWorldType {
+    let close_orbit = (orbit_roll + 6).clamp(1, 11) as u8;
+    let far_orbit = close_orbit + 13;
+    match flux {
+        -5 | -4 => MainWorldType::FarSatellite(far_orbit),
+        -3 => MainWorldType::CloseSatellite(close_orbit),
+        _ => MainWorldType::Planet,
     }
 }
 
