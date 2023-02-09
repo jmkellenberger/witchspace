@@ -14,11 +14,11 @@ struct Cli {
 fn main() {
     let args = Cli::parse();
     let seed: Seed = match args.seed {
-        Some(seed) => Seed::new(seed, Coordinate::new(0, 0)),
+        Some(seed) => Seed::new(seed, vec![1, 2, 3]),
         None => Seed::random(),
     };
     for world in 0..args.worlds {
-        let subseed = seed.subseed(Coordinate::new(world as i32, world as i32));
+        let subseed = seed.subseed(vec![world]);
         println!("World {}: {}", world + 1, generate_system(subseed));
     }
 }

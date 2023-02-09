@@ -1,4 +1,3 @@
-use crate::coordinate::Coordinate;
 use rand::{Rng, RngCore, SeedableRng};
 use rand_seeder::{Seeder, SipHasher, SipRng};
 use std::hash::{Hash, Hasher};
@@ -12,10 +11,12 @@ pub struct Seed {
 }
 
 impl Seed {
-    pub fn new(top_level_seed: String, coordinate: Coordinate) -> Self {
+    pub fn new<H: Hash>(top_level_seed: String, inputs: Vec<H>) -> Self {
         let mut hasher = SipHasher::new();
         top_level_seed.hash(&mut hasher);
-        coordinate.hash(&mut hasher);
+        for input in inputs {
+            input.hash(&mut hasher)
+        }
         let seed = hasher.finish();
 
         Self {
@@ -31,10 +32,12 @@ impl Seed {
         }
     }
 
-    pub fn subseed(&self, coordinate: Coordinate) -> Self {
+    pub fn subseed<H: Hash>(&self, inputs: Vec<H>) -> Self {
         let mut hasher = SipHasher::new();
         self.hash(&mut hasher);
-        coordinate.hash(&mut hasher);
+        for input in inputs {
+            input.hash(&mut hasher)
+        }
         let seed = hasher.finish();
         Self {
             top_level_seed: self.top_level_seed.clone(),
@@ -84,7 +87,7 @@ mod tests {
     use super::*;
 
     fn setup() -> Dice {
-        Seed::new(String::from("test"), Coordinate::new(0, 0)).to_rng()
+        Seed::new(String::from("test"), vec!["t", "e", "s", "t"]).to_rng()
     }
 
     #[test]
