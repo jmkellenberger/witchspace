@@ -4,6 +4,7 @@ pub struct System {
     pub location: Coordinate,
     pub stars: Stars,
     pub mainworld: World,
+    pub extensions: Extensions,
     pub worlds: i32,
     pub belts: i32,
     pub gas_giants: i32,
@@ -18,10 +19,11 @@ impl std::fmt::Display for System {
 
         write!(
             f,
-            "{} {} {} {} {} {}",
+            "{} {} {} {} {} {} {}",
             self.location,
             self.mainworld,
             self.mainworld.trade_codes(),
+            self.extensions,
             pbg,
             self.mainworld.travel_zone,
             self.stars

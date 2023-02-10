@@ -26,9 +26,12 @@ pub fn generate_system(seed: Seed, location: Coordinate) -> System {
     let gas_giants = ((rng.roll(2, 6, 0) as f32 / 2.0) - 2.0).round().max(0.0) as i32;
     let worlds = rng.roll(2, 6, 1 + gas_giants + belts);
 
+    let extensions = Extensions::new(&mut rng, &mainworld, gas_giants + belts);
+
     System {
         location,
         stars,
+        extensions,
         mainworld,
         worlds,
         belts,

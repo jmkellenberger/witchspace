@@ -1,4 +1,5 @@
 pub mod coordinate;
+pub mod extensions;
 pub mod generators;
 pub mod rng;
 pub mod star;
@@ -7,6 +8,7 @@ pub mod world;
 
 pub mod prelude {
     pub use crate::coordinate::*;
+    pub use crate::extensions::*;
     pub use crate::generators::*;
     pub use crate::rng::*;
     pub use crate::star::*;
