@@ -2,6 +2,7 @@ use std::fmt::Display;
 
 use crate::prelude::*;
 
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct Extensions {
     pub importance: i32,
     pub resources: i32,

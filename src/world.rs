@@ -90,7 +90,7 @@ impl World {
             .iter()
             .map(|x| x.to_string())
             .collect::<Vec<String>>()
-            .join(" ")
+            .join("")
     }
 
     pub fn has_naval_base(&self) -> bool {

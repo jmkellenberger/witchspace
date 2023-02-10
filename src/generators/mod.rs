@@ -37,6 +37,7 @@ pub fn generate_system(seed: Seed, location: Coordinate) -> System {
         worlds,
         belts,
         gas_giants,
+        allegiance: String::from("--"),
     }
 }
 
