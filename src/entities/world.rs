@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::prelude::*;
+use super::to_ehex;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Base {

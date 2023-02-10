@@ -1,6 +1,6 @@
-use std::fmt::Display;
-
+use super::to_ehex;
 use crate::prelude::*;
+use std::fmt::Display;
 
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct Extensions {
