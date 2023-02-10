@@ -12,17 +12,13 @@ pub struct Seed {
 }
 
 impl Seed {
-    pub fn new<H: Hash>(top_level_seed: String, inputs: Vec<H>) -> Self {
+    pub fn new(top_level_seed: String) -> Self {
         let mut hasher = HashAlgo::new();
         top_level_seed.hash(&mut hasher);
-        for input in inputs {
-            input.hash(&mut hasher)
-        }
-        let seed = hasher.finish();
 
         Self {
             top_level_seed,
-            seed,
+            seed: hasher.finish(),
         }
     }
 
@@ -88,7 +84,7 @@ mod tests {
     use super::*;
 
     fn setup() -> Dice {
-        Seed::new(String::from("test"), vec!["t", "e", "s", "t"]).to_rng()
+        Seed::new(String::from("test")).to_rng()
     }
 
     #[test]

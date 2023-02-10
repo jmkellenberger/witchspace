@@ -4,10 +4,6 @@ use witchspace::prelude::*;
 /// Generate a traveller main world profile
 #[derive(Parser)]
 struct Cli {
-    /// The number of rows in the sector
-    rows: u32,
-    /// The number of columns in the sector
-    cols: u32,
     /// A seed for the PRNG
     #[arg(long)]
     seed: Option<String>,
@@ -15,10 +11,10 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    let seed: Seed = match args.seed {
-        Some(seed) => Seed::new(seed, vec![1, 2, 3]),
-        None => Seed::random(),
+    let galaxy: Galaxy = match args.seed {
+        Some(seed) => Galaxy::new(seed),
+        None => Galaxy::random(),
     };
-    let sector = generate_sector(seed, args.rows, args.cols);
+    let sector = galaxy.get_sector(Coordinate::new(0, 0));
     println!("{sector}")
 }

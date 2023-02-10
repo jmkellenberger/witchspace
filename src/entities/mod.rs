@@ -12,6 +12,8 @@ pub mod world;
 pub use world::*;
 pub mod rng;
 pub use rng::*;
+pub mod galaxy;
+pub use galaxy::*;
 
 fn to_ehex(value: i32) -> String {
     match value {
