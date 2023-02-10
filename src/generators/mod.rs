@@ -41,7 +41,7 @@ pub fn generate_system(seed: Seed, location: Coordinate) -> System {
     }
 }
 
-pub fn generate_sector(seed: Seed, row_count: u32, col_count: u32) -> Vec<System> {
+pub fn generate_sector(seed: Seed, row_count: u32, col_count: u32) -> Sector {
     let mut rng = seed.to_rng();
     let mut systems = vec![];
 
@@ -55,5 +55,5 @@ pub fn generate_sector(seed: Seed, row_count: u32, col_count: u32) -> Vec<System
             }
         }
     }
-    systems
+    Sector { seed, systems }
 }

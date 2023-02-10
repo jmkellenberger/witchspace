@@ -2,6 +2,7 @@ pub mod coordinate;
 pub mod extensions;
 pub mod generators;
 pub mod rng;
+pub mod sector;
 pub mod star;
 pub mod system;
 pub mod world;
@@ -11,6 +12,7 @@ pub mod prelude {
     pub use crate::extensions::*;
     pub use crate::generators::*;
     pub use crate::rng::*;
+    pub use crate::sector::*;
     pub use crate::star::*;
     pub use crate::system::*;
     pub use crate::world::*;

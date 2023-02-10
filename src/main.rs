@@ -20,7 +20,5 @@ fn main() {
         None => Seed::random(),
     };
     let sector = generate_sector(seed, args.rows, args.cols);
-    for system in sector {
-        println!("{}", system);
-    }
+    println!("{sector}")
 }
