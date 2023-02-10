@@ -65,10 +65,10 @@ impl Star {
         }
     }
 
-    pub fn habitable_zone_orbit(&self, hz_var: i32) -> i32 {
+    pub fn habitable_zone_orbit(&self) -> i32 {
         let size = self.size();
         let class = self.class();
-        let hz_orbit = class.habitable_zone(size) - hz_var;
+        let hz_orbit = class.habitable_zone(size);
 
         hz_orbit.max(0)
     }

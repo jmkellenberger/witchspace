@@ -2,7 +2,11 @@ use crate::prelude::*;
 
 const STARPORT_DISTRIBUTION: [&str; 11] = ["A", "A", "A", "B", "B", "C", "C", "D", "E", "E", "X"];
 
-pub fn generate_mainworld<R: Rollable>(rng: &mut R, hz_variance: i32, orbit: i32) -> World {
+pub fn generate_mainworld<R: Rollable>(
+    rng: &mut R,
+    hz_variance: i32,
+    habitable_zone: i32,
+) -> World {
     let orbit_roll = rng.flux(0);
     let mainworld_type_roll = rng.flux(0);
     let mainworld_type = mainworld_type(mainworld_type_roll, orbit_roll);
@@ -33,6 +37,13 @@ pub fn generate_mainworld<R: Rollable>(rng: &mut R, hz_variance: i32, orbit: i32
     let size = match rng.roll(2, 6, -2) {
         10 => rng.roll(1, 6, 9),
         roll => roll,
+    };
+
+    // Asteroid worlds are placed as planetoid belts, ignoring HZ_var
+    let orbit = if size == 0 {
+        rng.roll(2, 6, -1 + habitable_zone).max(0)
+    } else {
+        (habitable_zone + hz_variance).max(0)
     };
 
     let atmosphere = match size {
