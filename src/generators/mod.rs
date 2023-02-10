@@ -30,6 +30,7 @@ pub fn generate_system(seed: Seed, location: Coordinate) -> System {
 
     System {
         location,
+        name: String::from("Anonymous"),
         stars,
         extensions,
         mainworld,

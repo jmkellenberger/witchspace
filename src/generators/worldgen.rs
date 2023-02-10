@@ -23,6 +23,13 @@ pub fn generate_mainworld<R: Rollable>(rng: &mut R, hz_variance: i32, orbit: i32
         "D" => scout_roll <= 7,
         _ => false,
     };
+
+    let bases = match (naval_base, scout_base) {
+        (true, true) => vec![Base::Naval, Base::Scout],
+        (true, false) => vec![Base::Naval],
+        (false, true) => vec![Base::Scout],
+        (false, false) => Vec::new(),
+    };
     let size = match rng.roll(2, 6, -2) {
         10 => rng.roll(1, 6, 9),
         roll => roll,
@@ -84,8 +91,7 @@ pub fn generate_mainworld<R: Rollable>(rng: &mut R, hz_variance: i32, orbit: i32
         hz_variance,
         orbit,
         port,
-        naval_base,
-        scout_base,
+        bases,
         size,
         atmosphere,
         hydrographics,

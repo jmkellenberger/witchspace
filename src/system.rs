@@ -2,6 +2,7 @@ use crate::prelude::*;
 
 pub struct System {
     pub location: Coordinate,
+    pub name: String,
     pub stars: Stars,
     pub mainworld: World,
     pub extensions: Extensions,
@@ -19,11 +20,13 @@ impl std::fmt::Display for System {
 
         write!(
             f,
-            "{} {} {} {} {} {} {}",
+            "{} {:16} {:10} {:24} {} {:4} {} {} {}",
             self.location,
+            self.name,
             self.mainworld,
             self.mainworld.trade_codes(),
             self.extensions,
+            self.mainworld.bases_to_string(),
             pbg,
             self.mainworld.travel_zone,
             self.stars

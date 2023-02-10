@@ -3,6 +3,26 @@ use std::fmt::Display;
 use crate::prelude::*;
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum Base {
+    Naval,
+    Scout,
+    WayStation,
+    Depot,
+}
+
+impl Display for Base {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let code = match self {
+            Base::Naval => "N",
+            Base::Scout => "S",
+            Base::WayStation => "W",
+            Base::Depot => "D",
+        };
+        write!(f, "{code:}")
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum TravelZone {
     Green,
     Amber,
@@ -35,8 +55,7 @@ pub struct World {
     pub hz_variance: i32,
     pub orbit: i32,
     pub port: String,
-    pub naval_base: bool,
-    pub scout_base: bool,
+    pub bases: Vec<Base>,
     pub size: i32,
     pub atmosphere: i32,
     pub hydrographics: i32,
@@ -50,15 +69,9 @@ pub struct World {
 
 impl Display for World {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let bases = match (self.naval_base, self.scout_base) {
-            (true, true) => "B",
-            (true, false) => "N",
-            (false, true) => "S",
-            (false, false) => " ",
-        };
         write!(
             f,
-            "{}{}{}{}{}{}{}-{} {}",
+            "{}{}{}{}{}{}{}-{}",
             self.port,
             to_ehex(self.size),
             to_ehex(self.atmosphere),
@@ -67,12 +80,35 @@ impl Display for World {
             to_ehex(self.government),
             to_ehex(self.law),
             to_ehex(self.tech),
-            bases,
         )
     }
 }
 
 impl World {
+    pub fn bases_to_string(&self) -> String {
+        self.bases
+            .iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()
+            .join(" ")
+    }
+
+    pub fn has_naval_base(&self) -> bool {
+        self.bases.contains(&Base::Naval)
+    }
+
+    pub fn has_scout_base(&self) -> bool {
+        self.bases.contains(&Base::Scout)
+    }
+
+    pub fn has_way_station(&self) -> bool {
+        self.bases.contains(&Base::WayStation)
+    }
+
+    pub fn has_depot(&self) -> bool {
+        self.bases.contains(&Base::Depot)
+    }
+
     // Planetary Trade Codes
     pub fn is_asteroid_belt(&self) -> bool {
         self.size == 0 && self.atmosphere == 0 && self.hydrographics == 0
