@@ -78,7 +78,7 @@ impl Display for Star {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self {
             Self::Star(class, decimal, size) => write!(f, "{}{} {}", class, decimal, size),
-            Self::Dwarf(class) => write!(f, "{}D", class),
+            Self::Dwarf(_class) => write!(f, "D"),
             Self::BrownDwarf => write!(f, "BD"),
         }
     }

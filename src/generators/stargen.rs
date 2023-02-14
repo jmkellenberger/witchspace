@@ -101,9 +101,10 @@ fn generate_star(class_flux: i32, class_d6: i32, decimal: u8, size_flux: i32) ->
     let class = spectral_class(class_flux, class_d6);
     let size = class_to_size(&class, &decimal, size_flux);
     match (class, size) {
+        (class, Some(Size::D)) => Star::Dwarf(class),
         (Class::BD, _) => Star::BrownDwarf,
         (class, Some(size)) => Star::Star(class, decimal, size),
-        (class, None) => Star::Dwarf(class),
+        (class, None) => panic!("Class {} star with no size!", class),
     }
 }
 
