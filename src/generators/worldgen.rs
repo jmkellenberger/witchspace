@@ -191,7 +191,31 @@ fn population_tech(population: i32) -> i32 {
 fn government_tech(government: i32) -> i32 {
     match government {
         0 | 5 => 1,
-        14 => -2,
+        13 => -2,
         _ => 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::population_tech;
+
+    #[test]
+    fn test_tech_low_pop_mod() {
+        for i in 1..=5 {
+            assert_eq!(population_tech(i), 1)
+        }
+    }
+
+    #[test]
+    fn test_tech_9_pop_mod() {
+        assert_eq!(population_tech(9), 2)
+    }
+
+    #[test]
+    fn test_tech_huge_pop_mod() {
+        for i in 10..=15 {
+            assert_eq!(population_tech(i), 4)
+        }
     }
 }

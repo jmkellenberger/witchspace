@@ -143,10 +143,14 @@ impl World {
     }
 
     pub fn is_ocean_world(&self) -> bool {
-        self.size > 9 && self.atmosphere > 2 && self.hydrographics == 10
+        self.size > 9 && self.atmosphere > 2 && self.hydrographics == 10 && !self.is_fluid_oceans()
     }
     pub fn is_water_world(&self) -> bool {
-        self.size > 2 && self.size < 10 && self.atmosphere > 2 && self.hydrographics == 10
+        self.size > 2
+            && self.size < 10
+            && self.atmosphere > 2
+            && self.hydrographics == 10
+            && !self.is_fluid_oceans()
     }
 
     pub fn is_satellite(&self) -> bool {

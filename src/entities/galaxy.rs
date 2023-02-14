@@ -20,7 +20,7 @@ impl Galaxy {
     }
 
     pub fn get_sector(&self, coordinate: Coordinate) -> Sector {
-        generate_sector(self.seed.subseed(vec![coordinate]), 8, 10)
+        generate_sector(self.seed.subseed(vec![coordinate]), 32, 40)
     }
 
     pub fn get_system(&self, sec_coordinate: Coordinate, hex_coordinate: Coordinate) -> System {

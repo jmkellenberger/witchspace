@@ -17,9 +17,9 @@ impl Display for Sector {
         let uwp_dash: String = "-".repeat(9);
         let ix: String = format!("{:6}", "{Ix}");
         let ix_dash: String = "-".repeat(6);
-        let ex: String = format!("{:7}", "{Ex}");
+        let ex: String = format!("{:7}", "(Ex)");
         let ex_dash: String = "-".repeat(7);
-        let cx: String = format!("{:6}", "{Cx}");
+        let cx: String = format!("{:6}", "[Cx]");
         let cx_dash: String = "-".repeat(6);
         let bases: String = format!("{:2}", "B");
         let bases_dash: String = "-".repeat(2);

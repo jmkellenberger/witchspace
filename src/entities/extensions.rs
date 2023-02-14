@@ -142,7 +142,7 @@ fn economic_extension(
     }
     .max(0);
 
-    let efficiency = rng.flux(0);
+    let efficiency = rng.flux(0).max(1);
 
     (resources, labor, infrastructure, efficiency)
 }

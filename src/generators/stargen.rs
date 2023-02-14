@@ -108,13 +108,17 @@ fn generate_star(class_flux: i32, class_d6: i32, decimal: u8, size_flux: i32) ->
     }
 }
 
-fn generate_companion<R: Rollable>(primary_flux: i32, rng: &mut R) -> Option<Star> {
+fn generate_companion<R: Rollable>(
+    primary_spectral_flux: i32,
+    primary_size_flux: i32,
+    rng: &mut R,
+) -> Option<Star> {
     if star_present(rng.flux(0)) {
         Some(generate_star(
-            rng.roll(1, 6, primary_flux - 1),
+            rng.roll(1, 6, primary_spectral_flux - 1),
             rng.roll(1, 6, 0),
             rng.roll(1, 10, -1) as u8,
-            rng.roll(1, 6, primary_flux + 2),
+            rng.roll(1, 6, primary_size_flux + 2),
         ))
     } else {
         None
@@ -122,32 +126,34 @@ fn generate_companion<R: Rollable>(primary_flux: i32, rng: &mut R) -> Option<Sta
 }
 
 pub fn generate_stars<R: Rollable>(rng: &mut R) -> Stars {
-    let primary_flux = rng.flux(0);
+    let primary_spectral_flux = rng.flux(0);
+    let primary_size_flux = rng.flux(0);
     let primary = generate_star(
-        primary_flux,
+        primary_spectral_flux,
         rng.roll(1, 6, 0),
         rng.roll(1, 10, -1) as u8,
-        rng.flux(0),
+        primary_size_flux,
     );
 
-    let primary_companion = generate_companion(primary_flux, rng);
-    let close = generate_companion(primary_flux, rng);
+    let primary_companion = generate_companion(primary_spectral_flux, primary_size_flux, rng);
+
+    let close = generate_companion(primary_spectral_flux, primary_size_flux, rng);
     let close_companion = if close.is_some() {
-        generate_companion(primary_flux, rng)
+        generate_companion(primary_spectral_flux, primary_size_flux, rng)
     } else {
         None
     };
 
-    let near = generate_companion(primary_flux, rng);
+    let near = generate_companion(primary_spectral_flux, primary_size_flux, rng);
     let near_companion = if near.is_some() {
-        generate_companion(primary_flux, rng)
+        generate_companion(primary_spectral_flux, primary_size_flux, rng)
     } else {
         None
     };
 
-    let far = generate_companion(primary_flux, rng);
+    let far = generate_companion(primary_spectral_flux, primary_size_flux, rng);
     let far_companion = if far.is_some() {
-        generate_companion(primary_flux, rng)
+        generate_companion(primary_spectral_flux, primary_size_flux, rng)
     } else {
         None
     };
