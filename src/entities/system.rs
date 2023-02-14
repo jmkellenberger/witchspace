@@ -42,7 +42,26 @@ impl System {
         self.extensions.importance > 3
     }
 
-    fn nobility_string(&self) -> String {
+    pub fn bases(&self) -> String {
+        self.mainworld.bases_to_string()
+    }
+
+    pub fn travel_zone(&self) -> String {
+        self.mainworld.travel_zone.to_string()
+    }
+
+    pub fn pbg(&self) -> String {
+        format!(
+            "{}{}{}",
+            self.mainworld.population_digit, self.belts, self.gas_giants
+        )
+    }
+
+    pub fn trade_codes(&self) -> String {
+        self.mainworld.trade_codes()
+    }
+
+    pub fn nobility(&self) -> String {
         let mut ns = Vec::new();
 
         if self.has_knight() {
@@ -79,23 +98,18 @@ impl System {
 
 impl std::fmt::Display for System {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let pbg = format!(
-            "{}{}{}",
-            self.mainworld.population_digit, self.belts, self.gas_giants
-        );
-
         write!(
             f,
             "{} {:16} {:10} {:24} {} {:8} {:4} {} {} {:2} {:2} {}",
             self.location,
             self.name,
             self.mainworld,
-            self.mainworld.trade_codes(),
+            self.trade_codes(),
             self.extensions,
-            self.nobility_string(),
-            self.mainworld.bases_to_string(),
-            self.mainworld.travel_zone,
-            pbg,
+            self.nobility(),
+            self.bases(),
+            self.travel_zone(),
+            self.pbg(),
             self.worlds,
             self.allegiance,
             self.stars

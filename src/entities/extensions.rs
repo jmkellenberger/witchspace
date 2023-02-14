@@ -42,7 +42,11 @@ impl Display for Extensions {
         .collect::<Vec<String>>()
         .join("");
 
-        write!(f, "{{{}{}}}({rli}{eff})[{cx}]", ix_sign, self.importance)
+        write!(
+            f,
+            "{{ {}{} }} ({rli}{eff}) [{cx}]",
+            ix_sign, self.importance
+        )
     }
 }
 
@@ -110,12 +114,16 @@ fn importance_extension(world: &World) -> i32 {
         world.is_industrial(),
         world.has_naval_base() && world.has_scout_base(),
         world.has_way_station(),
-        !world.tech < 8,
-        !world.population < 7,
-        !["D", "E", "X"].contains(&world.port.as_str()),
     ]
     .into_iter()
-    .fold(-3, |acc, x| acc + x as i32)
+    .fold(0, |acc, x| acc + x as i32)
+        - [
+            world.tech < 9,
+            world.population < 7,
+            ["D", "E", "X"].contains(&world.port.as_str()),
+        ]
+        .into_iter()
+        .fold(0, |acc, x| acc + x as i32)
 }
 
 fn economic_extension(
