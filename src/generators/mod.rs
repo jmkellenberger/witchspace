@@ -19,7 +19,7 @@ pub fn generate_system(seed: Seed, location: Coordinate) -> System {
     let mut rng = seed.to_rng();
     let stars = generate_stars(&mut rng);
     let hz_variance = habitable_zone_variance(rng.flux(0));
-    let habitable_zone = stars.primary.habitable_zone_orbit();
+    let habitable_zone = stars[0].habitable_zone_orbit();
     let mainworld = generate_mainworld(&mut rng, hz_variance, habitable_zone);
 
     let belts = rng.roll(1, 6, -3).max(0);

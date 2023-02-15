@@ -1,41 +1,8 @@
 use std::fmt::Display;
 
-#[derive(Debug, Copy, Clone)]
-pub struct Stars {
-    pub primary: Star,
-    pub primary_companion: Option<Star>,
-    pub close: Option<Star>,
-    pub close_companion: Option<Star>,
-    pub near: Option<Star>,
-    pub near_companion: Option<Star>,
-    pub far: Option<Star>,
-    pub far_companion: Option<Star>,
-}
-
-impl Display for Stars {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let companions = vec![
-            self.primary_companion,
-            self.close,
-            self.close_companion,
-            self.near,
-            self.near_companion,
-            self.far,
-            self.far_companion,
-        ]
-        .into_iter()
-        .filter(|star| star.is_some())
-        .map(|star| star.unwrap().to_string())
-        .collect::<Vec<String>>()
-        .join(" ");
-
-        write!(f, "{} {}", self.primary, companions)
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Star {
-    Star(Class, Decimal, Size),
+    Star(Class, Luminosity, Size),
     Dwarf(Class),
     BrownDwarf,
 }
@@ -84,7 +51,7 @@ impl Display for Star {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Class {
     O,
     B,
@@ -206,7 +173,7 @@ impl Display for Class {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Size {
     Ia,
     Ib,
@@ -233,4 +200,4 @@ impl Display for Size {
     }
 }
 
-pub type Decimal = u8;
+type Luminosity = u8;

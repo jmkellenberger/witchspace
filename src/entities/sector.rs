@@ -65,7 +65,7 @@ impl Display for Sector {
         let stellar_width = self
             .systems
             .iter()
-            .map(|sys| sys.stars.to_string().len())
+            .map(|sys| sys.stars().len())
             .reduce(|acc, x| if x > acc { x } else { acc })
             .unwrap();
 
@@ -128,7 +128,7 @@ impl Display for Sector {
                     sys.pbg(),
                     sys.worlds,
                     sys.allegiance,
-                    sys.stars
+                    sys.stars()
                 ))
                 .collect::<Vec<String>>()
                 .join("\n")

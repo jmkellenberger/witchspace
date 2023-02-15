@@ -79,7 +79,7 @@ fn m_class_sizes(flux: i32) -> Size {
     }
 }
 
-fn class_to_size(class: &Class, decimal: &u8, flux: i32) -> Option<Size> {
+fn class_to_size(class: &Class, lum: u8, flux: i32) -> Option<Size> {
     let size = match class {
         Class::O => Some(o_class_sizes(flux)),
         Class::B => Some(b_class_sizes(flux)),
@@ -90,7 +90,8 @@ fn class_to_size(class: &Class, decimal: &u8, flux: i32) -> Option<Size> {
     };
 
     // Size IV not for K5-K9. Size VI not for F0-F4.
-    match (class, size, decimal) {
+
+    match (class, size, lum) {
         (Class::K, Some(Size::IV), 5..=9) => Some(Size::V),
         (Class::F, Some(Size::VI), 0..=4) => Some(Size::V),
         _ => size,
@@ -99,11 +100,13 @@ fn class_to_size(class: &Class, decimal: &u8, flux: i32) -> Option<Size> {
 
 fn generate_star(class_flux: i32, class_d6: i32, decimal: u8, size_flux: i32) -> Star {
     let class = spectral_class(class_flux, class_d6);
-    let size = class_to_size(&class, &decimal, size_flux);
+    let lum = decimal;
+    let size = class_to_size(&class, lum, size_flux);
+
     match (class, size) {
         (class, Some(Size::D)) => Star::Dwarf(class),
         (Class::BD, _) => Star::BrownDwarf,
-        (class, Some(size)) => Star::Star(class, decimal, size),
+        (class, Some(size)) => Star::Star(class, lum, size),
         (class, None) => panic!("Class {} star with no size!", class),
     }
 }
@@ -125,7 +128,7 @@ fn generate_companion<R: Rollable>(
     }
 }
 
-pub fn generate_stars<R: Rollable>(rng: &mut R) -> Stars {
+pub fn generate_stars<R: Rollable>(rng: &mut R) -> Vec<Star> {
     let primary_spectral_flux = rng.flux(0);
     let primary_size_flux = rng.flux(0);
     let primary = generate_star(
@@ -135,37 +138,25 @@ pub fn generate_stars<R: Rollable>(rng: &mut R) -> Stars {
         primary_size_flux,
     );
 
-    let primary_companion = generate_companion(primary_spectral_flux, primary_size_flux, rng);
+    let mut stars: Vec<Star> = (0..7)
+        .filter_map(|_| generate_companion(primary_spectral_flux, primary_size_flux, rng))
+        .collect();
 
-    let close = generate_companion(primary_spectral_flux, primary_size_flux, rng);
-    let close_companion = if close.is_some() {
-        generate_companion(primary_spectral_flux, primary_size_flux, rng)
-    } else {
-        None
-    };
+    stars.push(primary);
+    stars.sort_unstable_by(|a, b| match (a, b) {
+        (Star::Star(c1, l1, s1), Star::Star(c2, l2, s2)) => {
+            if c1 == c2 {
+                if s1 == s2 {
+                    l2.cmp(l1).reverse()
+                } else {
+                    s1.cmp(&s2)
+                }
+            } else {
+                a.cmp(&b)
+            }
+        }
+        (_, _) => a.cmp(&b),
+    });
 
-    let near = generate_companion(primary_spectral_flux, primary_size_flux, rng);
-    let near_companion = if near.is_some() {
-        generate_companion(primary_spectral_flux, primary_size_flux, rng)
-    } else {
-        None
-    };
-
-    let far = generate_companion(primary_spectral_flux, primary_size_flux, rng);
-    let far_companion = if far.is_some() {
-        generate_companion(primary_spectral_flux, primary_size_flux, rng)
-    } else {
-        None
-    };
-
-    Stars {
-        primary,
-        primary_companion,
-        close,
-        close_companion,
-        near,
-        near_companion,
-        far,
-        far_companion,
-    }
+    return stars;
 }

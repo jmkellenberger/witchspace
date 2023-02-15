@@ -4,7 +4,7 @@ use crate::prelude::*;
 pub struct System {
     pub location: Coordinate,
     pub name: String,
-    pub stars: Stars,
+    pub stars: Vec<Star>,
     pub mainworld: World,
     pub extensions: Extensions,
     pub worlds: i32,
@@ -55,6 +55,14 @@ impl System {
             "{}{}{}",
             self.mainworld.population_digit, self.belts, self.gas_giants
         )
+    }
+
+    pub fn stars(&self) -> String {
+        self.stars
+            .iter()
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>()
+            .join(" ")
     }
 
     pub fn trade_codes(&self) -> String {
@@ -112,7 +120,7 @@ impl std::fmt::Display for System {
             self.pbg(),
             self.worlds,
             self.allegiance,
-            self.stars
+            self.stars()
         )
     }
 }

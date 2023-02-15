@@ -191,7 +191,7 @@ fn population_tech(population: i32) -> i32 {
 fn government_tech(government: i32) -> i32 {
     match government {
         0 | 5 => 1,
-        13 => -2,
+    13 => -2,
         _ => 0,
     }
 }
